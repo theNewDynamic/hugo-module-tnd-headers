@@ -1,10 +1,6 @@
-This is a template repo. To start.
+# headers Hugo Module
 
-search `{moduleName}` through the project and replace it with the module identifier (ex: `socials` for `hugo-module-tnd-socials`)
-
-# {moduleName} Hugo Module
-
-(intro)
+WIP!
 
 ## Requirements
 
@@ -13,47 +9,59 @@ Requirements:
 - Hugo 0.61.0
 
 
-## Installation
+## Quick setup
 
-If not already, [init](https://gohugo.io/hugo-modules/use-modules/#initialize-a-new-module) your project as Hugo Module:
-
-```
-$: hugo mod init {repo_url}
-```
-
-Configure your project's module to import this module:
+## 1. Add module to your project's imports:
 
 ```yaml
 # config.yaml
 module:
   imports:
-  - path: github.com/theNewDynamic/hugo-module-tnd-{moduleName}
+    - path: github.com/theNewDynamic/hugo-module-tnd-headers
 ```
 
-## Usage
+### 2. Add redirect output format for chosen service.
 
-### Some Partial/Feature
+#### Netlify
 
-#### Examples
+Set configuration so Hugo produces the headers file at the root of the site (on the Homepage)
+
+```yaml
+# config.yaml
+
+outputs:
+  homepage: 
+    - HTML
+    - tnd_headers_netlify
+    # + any other outputs needed on the homepage.
+```
+OR
+
+```yaml
+# content/_index.md
+title: Homepage
+homepage: 
+  - HTML
+  - tnd_headers_netlify
+  # + any other outputs needed on the homepage.
+```
 
 ### Settings
 
-Settings are added to the project's parameter under the `tnd_{moduleName}` map as shown below.
+Settings are added to the project's parameter under the `tnd_headers` map as shown below.
 
 ```yaml
 # config.yaml
 params:
-  tnd_{moduleName}:
-    [...]
+  tnd_headers:
+    headers:
+      - target: /*
+        values:
+          - key: Referrer-Policy
+            value: strict-origin-when-cross-origin
+          - key: Feature-Policy
+            value: camera 'none'; geolocation 'none'; microphone 'none'
 ```
-
-#### Configure Key 1
-
-#### Configure Key 2
-
-#### Defaults
-
-ld copy/paste the above to your settings and append with new extensions.
 
 ## theNewDynamic
 

@@ -1,0 +1,20 @@
+{{/*
+  Template for Netlify's Headers Output Format. This is used to produce the `_headers` file
+
+  @author @regisphilibert
+
+  @context Any (.)
+
+  @access public
+
+*/}}
+{{- range partialCached "tnd-headers/private/GetHeaders" "tnd-headers/GetHeaders" }}
+{{ with .target -}}
+{{ . }}
+{{- end }}
+{{- with .values -}}
+{{- range . }}
+  {{ .key -}}: {{ .value }}
+{{- end -}}
+{{- end -}}
+{{ end }}
