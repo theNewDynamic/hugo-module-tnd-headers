@@ -31,14 +31,17 @@
     {{ with .target }}
       {{ $target = . }}
     {{ end }}
+    {{ $weight := 0 }}
+    {{ with .weight }}
+      {{ $weight = int . }}
+    {{ end }}
     {{ with $header.values }}
       {{ $values := slice }}
       {{ range . }}
         {{ $values = $values | append (dict "key" .key "value" .value) }}
       {{ end }}
-      {{ $return = $return | append (dict "target" $target "values" $values) }}
+      {{ $return = $return | append (dict "target" $target "weight" $weight "values" $values) }}
     {{ end }}
   {{ end }}
 {{ end }}
-
-{{ return $return }}
+{{ return sort $return "weight" "asc" }}
