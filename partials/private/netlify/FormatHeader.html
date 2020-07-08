@@ -5,7 +5,7 @@
   @author @regisphilibert
 
   @context Map
-            String (.key)
+            String (.field)
             String|Slice (.value)
 
   @access private
@@ -23,7 +23,7 @@
 {{ $header := "" }}
 {{ with .value }}
   {{ $value := partialCached "tnd-headers/private/netlify/FormatValue" . . }}
-  {{ $header = printf `%s: %s` $.key $value }}
+  {{ $header = printf `%s: %s` $.field $value }}
 {{ end }}
 
 {{ return $header }}

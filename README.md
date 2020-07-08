@@ -52,17 +52,17 @@ homepage:
 
 Any given header has to be part of group which targets a URL path.
 
-Any given group of headers are defined by the following keys. Those marked by an * are mandatory
+Any given group of headers are defined by the following fields. Those marked by an * are mandatory
 
 - __target__: the URL to match (default: /*)
 - __weight__: A degree of ordering when printing the gorups.(default: 0)
-- __headers__\*: A list of headers which requires the following keys:
-  - __key__: The key of the header (example: Referrer-Policy )
+- __headers__\*: A list of headers which requires the following fields:
+  - __field__: The [field](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields) of the header (example: Referrer-Policy )
   - __value__: The value of the header (example: trict-origin-when-cross-origin). If an array, the value, each entry will be concanated into one string.
 
 ## Configuration
 
-Configuration is set through the site's configurationf file's using the `tnd_headers` reserved keys.
+Configuration is set through the site's configurationf file's using the `tnd_headers` reserved fields.
 
 __groups__: A list of custom header groups. See below.
 
@@ -70,7 +70,7 @@ __groups__: A list of custom header groups. See below.
 ## Adding Custom Headers
 
 ### Though Configuration File (hardcoded)
-User can add a list of header groups through the site's configuration file. Each group can use the API's available keys.
+User can add a list of header groups through the site's configuration file. Each group can use the API's available fields.
 
 ```yaml
 # config.yaml
@@ -78,16 +78,16 @@ params:
   tnd_headers:
     groups:
       - headers:
-        - key: Referrer-Policy
+        - field: Referrer-Policy
           value: strict-origin-when-cross-origin
-        - key: Feature-Policy
+        - field: Feature-Policy
           value: 
             - camera 'none';
             - geolocation 'none';
             - microphone 'none';
       - target: /api/*
         headers:
-        - key: Content-Type
+        - field: Content-Type
           value: application/json
 ```
 
@@ -104,7 +104,7 @@ With the following settings, the project will produce the following `_headers` f
 ### Through a Returning Partial (dynamnic)
 
 In order to add header groups dynamically, user can create a dedicated returning partial in the project at `layouts/partials/tnd-headers/AddHeaderGroups.html`. 
-The partial should return a slice of maps which uses the API's available keys.
+The partial should return a slice of maps which uses the API's available fields.
 
 ## theNewDynamic
 
