@@ -1,0 +1,47 @@
+{{/*
+  GetHeaderGroups
+
+  @author @regisphilibert
+
+  @context Any (.)
+
+  @access private
+
+  @return Slices of Map
+    - String (.target)
+      Int (.weight)
+      Slice of Maps (.headers)
+
+  @example - Go Template
+  {{ range $group := partialCached "tnd-headers/private/GetHeaderGroups" "tnd-headers/private/GetHeaderGroups" }}
+  {{ end }}
+*/}}
+{{ $groups := slice }}
+{{ with partialCached "tnd-headers/private/GetConfig" "tnd-headers/GetConfig" "tnd-headers/GetConfig" }}
+  {{ with .groups }}
+    {{ $groups = $groups | append . }}
+  {{ end }}
+{{ end }}
+{{ with partialCached "tnd-headers/AddHeaders" . }}
+  {{ $groups = $groups | append . }}
+{{ end }}
+
+{{ $return := slice }}
+{{ with $groups }}
+  {{ range $group := . }}
+    {{/* Target defaults to `/*` */}}
+    {{ $target := "/*" }}
+    {{ with .target }}
+      {{ $target = . }}
+    {{ end }}
+    {{/* Weight defaults to `0` */}}
+    {{ $weight := 0 }}
+    {{ with .weight }}
+      {{ $weight = int . }}
+    {{ end }}
+    {{ with $group.headers }}
+      {{ $return = $return | append (dict "target" $target "weight" $weight "headers" $group.headers) }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+{{ return sort $return "weight" "asc" }}

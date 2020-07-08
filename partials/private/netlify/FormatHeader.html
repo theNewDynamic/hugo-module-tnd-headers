@@ -1,0 +1,29 @@
+{{/*
+  netlify/FormatHeader
+  Given a map detailed below, this will format a string using Netlify's `_headers` header format
+
+  @author @regisphilibert
+
+  @context Map
+            String (.key)
+            String|Slice (.value)
+
+  @access private
+
+  @use 
+    - private/netlify/FormatValue
+
+  @return String
+
+  @example - Go Template
+    {{ with partialCached "tnd-headers/private/netlify/FormatHeader" . . }}
+      {{ . }}
+    {{ end }}
+*/}}
+{{ $header := "" }}
+{{ with .value }}
+  {{ $value := partialCached "tnd-headers/private/netlify/FormatValue" . . }}
+  {{ $header = printf `%s: %s` $.key $value }}
+{{ end }}
+
+{{ return $header }}

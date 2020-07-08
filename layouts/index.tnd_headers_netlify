@@ -8,13 +8,13 @@
   @access public
 
 */}}
-{{- range partialCached "tnd-headers/private/GetHeaders" "tnd-headers/GetHeaders" }}
-{{ with .target -}}
+{{ range partialCached "tnd-headers/private/GetFormatedGroups" "netlify" "netlify" }}
+{{- with .target -}}
 {{ . }}
-{{- end }}
-{{- with .values -}}
+{{- end -}}
+{{- with .headers -}}
 {{- range . }}
-  {{ .key -}}: {{ .value }}
+  {{ . }}
 {{- end -}}
-{{- end -}}
-{{ end }}
+{{- end }}
+{{ end -}}

@@ -1,0 +1,36 @@
+{{/*
+  GetFormatedGroups
+
+  @author @regisphilibert
+
+  @context String (.)
+
+  @access public
+
+  @use
+    - private/GetHeaderGroups
+
+  @return Slice
+    - String (.target)
+      Slice of Strings (.headers)
+
+  @example - Go Template
+  {{ range partialCached "tnd-headers/private/GetFormatedGroups" "netlify" "netlify" }}
+    [...]
+  {{ end }}
+*/}}
+{{ $service := . }}
+{{ $partial := printf "tnd-headers/private/%s/FormatHeader" $service }}
+{{ $groups := slice }}
+{{ range $group := partialCached "tnd-headers/private/GetHeaderGroups" "tnd-headers/private/GetHeaderGroups" }}
+  {{ with .headers }}
+    {{ $target := $group.target }}
+    {{ $headers := slice }}
+    {{ range $header := . }}
+      {{ $headers = $headers | append (partialCached $partial . .) }}
+    {{ end }}
+    {{ $groups = $groups | append (dict "target" $target "headers" $headers) }}
+  {{ end }}
+{{ end }}
+
+{{ return $groups }}

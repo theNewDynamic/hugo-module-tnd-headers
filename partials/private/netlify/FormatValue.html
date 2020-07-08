@@ -1,0 +1,26 @@
+{{/*
+  netlify/Formatvalue
+  Given a String or a Slice this will format a string using Netlify's `_headers` format
+
+  @author @regisphilibert
+
+  @context Map
+            String|Slice (.)
+
+  @access private
+
+
+  @return String
+
+  @example - Go Template
+    {{ with partialCached "tnd-headers/private/netlify/FormatValue" . . }}
+      {{ . }}
+    {{ end }}
+*/}}
+{{ $value := . }}
+{{/* If context is a slice, we need to join the strings into one. */}}
+{{ if reflect.IsSlice $value }}
+  {{ $value = delimit $value "" }}
+{{ end }}
+
+{{ return $value }}
