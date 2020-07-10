@@ -19,7 +19,9 @@
 {{ $groups := slice }}
 {{ with partialCached "tnd-headers/private/GetConfig" "tnd-headers/GetConfig" "tnd-headers/GetConfig" }}
   {{ with .groups }}
-    {{ $groups = $groups | append . }}
+    {{ range . }}
+      {{ $groups = $groups | append . }}
+    {{ end }}
   {{ end }}
 {{ end }}
 {{ with partialCached "tnd-headers/AddHeaders" . }}
