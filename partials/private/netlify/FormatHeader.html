@@ -22,7 +22,7 @@
 */}}
 {{ $header := "" }}
 {{ with .value }}
-  {{ $value := partialCached "tnd-headers/private/netlify/FormatValue" . . }}
+  {{ $value := partialCached "tnd-headers/private/netlify/FormatValue" $ $ }}
   {{ $header = printf `%s: %s` $.field $value }}
 {{ end }}
 

@@ -1,0 +1,63 @@
+{{/*
+  FormatValue/content-security-policy
+  Given a Map/Slice/string this will create a CSP header string using Netlify's `_headers` format
+  It is expected that other services will use the same formating, but in the mean time, it is limited to netlify
+  
+  For referecence to content security policies and terminologies used in these comments see: 
+  https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+
+  @author @regisphilibert
+
+  @context Map
+            String|Slice|Map (.)
+
+  @access private
+
+  @return String
+
+  @example - Go Template: Assuming $field_id value is `Content-Security-Policy`
+  {{ $partial := "tnd-headers/private/netlify/FormatValue/default.html" }}
+  {{ $partial_path := print "tnd-headers/private/netlify/FormatValue/" $field_id ".html" }}
+  {{ if templates.Exists (print "partials/" $partial_path) }}
+    {{ $partial = $partial_path }}
+  {{ end }}
+*/}}
+{{ $value := . }}
+{{ if reflect.IsSlice . }}
+  {{/* If $value holds a Slice, it means we have a list of policy directive which
+    we can just concatenate into one string using `;` as a delimiter and close with another `;`
+    We're done */}}
+  {{ $value = printf `%s;` (delimit $value "; ") }}
+{{ else if reflect.IsMap . }}
+  {{/* If $value holds a Map... this means we have a set of keys (named after the fetch directive, holding either
+    a string of sources or an array of sources */}}
+  {{ $value = "" }}
+  {{ range $fetch_directive, $srcs := . }}
+    {{ $srcs_values := $srcs }}
+    {{/* If the $srcs holds a String, we'll use it as such */}}
+    {{ if reflect.IsSlice $srcs_values }}
+      {{/* But if it holds a slice, we need to concatenate it into one string. */}}
+      {{ $srcs_values = slice }}
+      {{ range . }}
+        {{/* Source string might use quotes like `'self'` or not like scheme-source (`https://some-cdn.com`) */}}
+        {{ $string := . }}
+        {{ if partialCached "tnd-headers/private/SDUsesQuotes.html" . . }}
+          {{ $string = printf `'%s'` $string }}
+        {{ end }}
+        {{/* Once the quote question is sorted out, we append the new src string to an array. */}}
+        {{ $srcs_values = $srcs_values | append $string }}
+      {{ end }}
+      {{/* We simply concantenate the entries with whitespace as a delimiter */}}
+      {{ $srcs_values = delimit $srcs_values " " }}
+    {{ end }}
+    {{/* The policy directive string contains the unquoted fetch directive and the string of sources built above, closed by a `;` */}}
+    {{ $policy_directive := printf `%s %s;` $fetch_directive $srcs_values }}
+    {{/* We record the first policy directive or add the policy to the existing list of policies */}}
+    {{ with $value }}
+      {{ $value = printf `%s %s` $value $policy_directive }}
+    {{ else }}
+      {{ $value = printf `%s` $policy_directive }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+{{ return $value }}

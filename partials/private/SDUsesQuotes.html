@@ -1,0 +1,24 @@
+{{/*
+  SDUsesQuotes (Source Directive uses quotes)
+  Some source directives uses quotes (`'self'` `'unsafe-line'` etc...) while other like host-source or scheme-source don't.
+  For now we only check for http in the string. Will improve later to encompass every possible scheme-source or host-source.
+  https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src
+
+  @author @regisphilibert
+
+  @context String
+
+  @access public
+
+  @return String
+
+  @example - Go Template
+{{ if partialCached "tnd-headers/private/SDUsesQuotes.html" . . }}
+  {{ $string = printf `'%s'` $string }}
+{{ end }}
+*/}}
+{{ $return := true }}
+{{ if or (hasPrefix . "http") (in . "'" )}}
+  {{ $return = false }}
+{{ end }}
+{{ return $return }}

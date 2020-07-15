@@ -60,6 +60,25 @@ Any given group of headers are defined by the following fields. Those marked by 
   - __field__: The [field](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields) of the header (example: Referrer-Policy )
   - __value__: The value of the header (example: trict-origin-when-cross-origin). If an array, the value, each entry will be concanated into one string.
 
+### Special Cases for Content-Security-Policy headers
+
+CSP is a complicatated header which can pack a lot of information into one single line. 
+To ease up on the process of maintaining those the Module takes several data structure for the value of a headers whose `field` matches `content-security-policy` or `Content-Security-Policy`.
+
+#### As a slice of strings. 
+Every strings will be concatenated into one.
+- base-uri 'none'
+- connect-src 'self' https://cdn.usefathom.com
+Will print `Content-Security-Policy: base-uri 'none'; connect-src 'self' https://cdn.usefathom.com;`
+
+#### As a map of slices
+- base-url:
+  - none
+- connect-src:
+  - self
+  - https://cdn.usefathom.com
+Will print `Content-Security-Policy: base-uri 'none'; connect-src 'self' https://cdn.usefathom.com;`
+
 ## Configuration
 
 Configuration is set through the site's configurationf file's using the `tnd_headers` reserved fields.
@@ -84,7 +103,17 @@ params:
           value: 
             - camera 'none';
             - geolocation 'none';
-            - microphone 'none';
+            - microphone 'none';à
+        # Note special UX availiable for Content-Security-Policy
+        - field: Content-Security-Policy
+          value:
+            # As a string
+            default-src: 'self' 'unsafe-line'
+            # As a list of strings
+            script-src:
+            - 'self'
+            - 'unsafe-eval'
+            - https://unpkg.com
       - target: /api/*
         headers:
         - field: Content-Type

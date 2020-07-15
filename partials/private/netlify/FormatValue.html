@@ -1,26 +1,27 @@
 {{/*
-  netlify/Formatvalue
-  Given a String or a Slice this will format a string using Netlify's `_headers` format
+  FormatValue
+  Will format the value according to its field. For now, only CSP has its own formating.
 
   @author @regisphilibert
 
   @context Map
-            String|Slice (.)
+          String (.field)
+          Map/Slice/String (.value)
 
-  @access private
-
-
-  @return String
+  @access public
 
   @example - Go Template
-    {{ with partialCached "tnd-headers/private/netlify/FormatValue" . . }}
-      {{ . }}
-    {{ end }}
+    {{ $value := partialCached "tnd-headers/private/netlify/FormatValue" $ $ }}
 */}}
-{{ $value := . }}
-{{/* If context is a slice, we need to join the strings into one. */}}
-{{ if reflect.IsSlice $value }}
-  {{ $value = delimit $value "" }}
+{{ $value := "" }}
+{{ $field_id := urlize .field }}
+{{ $partial := "tnd-headers/private/netlify/FormatValue/default.html" }}
+{{ $partial_path := print "tnd-headers/private/netlify/FormatValue/" $field_id ".html" }}
+{{ if templates.Exists (print "partials/" $partial_path) }}
+  {{ $partial = $partial_path }}
+{{ end }}
+{{ with .value }}
+  {{ $value = partialCached $partial . . }}
 {{ end }}
 
 {{ return $value }}
